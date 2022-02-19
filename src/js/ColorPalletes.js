@@ -1,14 +1,14 @@
 import { rndInt } from "./Util.js"
 
 var colorPalletes = {
-	"Orange/Yellow/Green": ["#EA5C2B", "#FF7F3F", "#F6D860", "#95CD41"],
+	// "Orange/Yellow/Green": ["#EA5C2B", "#FF7F3F", "#F6D860", "#95CD41"],
 	// Neon: ["#542E71", "#FB3640", "#FDCA40", "#A799B7"],
 	// "Red/Blue/White": ["rgba(255,0,0,1)", "#292C6D", "#FAEDF0", "#EC255A"],
 
-	"Red/Blue": ["#FF5959", "#676FA3", "#CDDEFF", "#EEF2FF"],
+	metalBlue: ["#0024b3", "#676FA3", "#CDDEFF", "#000000"],
 	Blue: ["#1A374D", "#406882", "#6998AB", "#B1D0E0"],
 	// "Purple/Blue": ["#370665", "#35589A", "#F14A16", "#FC9918"],
-	Greens: ["#FEFFDE", "#DDFFBC", "#91C788", "#52734D"],
+	Greens: ["#FEFFDE", "#f8ea54", "#4d9d3f", "#52734D"],
 	// brownRedish: ["#b3feff", "#804747", "#c09191", "#030202"],
 	// white: [
 	// 	"rgba(255,255,255,1)",
@@ -16,15 +16,10 @@ var colorPalletes = {
 	// 	"rgba(255,255,255,0.3)",
 	// 	"rgba(255,255,255,0.1)"
 	// ],
-	Monochrome2: [
-		"rgba(40,10,10,1)",
-		"rgba(20,0,0,0.1)",
-		"rgba(250,200,200,1)",
-		"rgba(120,60,60,1)"
-	],
+	Monochrome2: ["#460101", "#ff9500", "#570000", "#000000"],
 	Monochrome: [
 		"rgba(10,10,10,1)",
-		"rgba(0,0,0,0.1)",
+		"rgba(240,240,0,0.1)",
 		"rgba(250,250,250,1)",
 		"rgba(60,60,60,1)"
 	],
@@ -35,10 +30,10 @@ var colorPalletes = {
 		"rgba(5,15,250,1)"
 	],
 	greenGolden: [
-		"rgba(50,50,50,1)",
 		"rgba(19,110,22,1)",
 		"rgba(250,250,5,1)",
-		"rgba(180,180,50,1)"
+		"rgba(180,180,50,1)",
+		"rgba(50,50,50,1)"
 	]
 	// Monochrome: [
 	// 	"rgba(10,,150,1)",
