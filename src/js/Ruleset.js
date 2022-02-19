@@ -16,6 +16,9 @@ export class Ruleset {
 		//need to have a higher value for the cell to evolve
 		this.thresholds = opts.thresholds
 
+		//How flat the output colors are rendered.
+		this.blending = opts.blending
+
 		//Operations that determine the behavior of a cell. Count is the number of neighbours that have a higher value than the cell itself.
 		//count is above threshold (op0)
 		//count is 0 (op1)
@@ -157,6 +160,7 @@ export const getRandomRuleset = () =>
 			b: "",
 			a: ""
 		},
+		blending: rndFloat(0, 1),
 		startSettings: getRandomStartSettings()
 	})
 

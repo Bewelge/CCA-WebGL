@@ -84,7 +84,7 @@ export class Automaton {
 			this.ruleset.states.b,
 			this.ruleset.states.a
 		)
-		this.finalMat.uniforms.states.value = new THREE.Vector4(
+		this.outputMaterial.uniforms.states.value = new THREE.Vector4(
 			this.ruleset.states.r,
 			this.ruleset.states.g,
 			this.ruleset.states.b,
@@ -163,6 +163,8 @@ export class Automaton {
 		//We use a "ping-pong"-shader for this. This is a convenient way to save the state of our automaton which is an otherwise difficult thing to do in shaders.
 		//It's actually two textures that alternately read and write on each other. ie texture0's pixels are the current state of the automaton, then texture1 will use that
 		//to compute the next state and render it. Next texture0 will read texture1 and compute the next state and so on.
+		let tileAmount = this.getTileAmount(this.ruleset.dim)
+
 		this.automatonShader = new PingPongShaderBuilder()
 			.withDimensions(this.width, this.height)
 			.withVertex(PASS_THROUGH_VERTEX)
@@ -182,10 +184,10 @@ export class Automaton {
 			.withUniform(
 				"threshold",
 				new THREE.Vector4(
-					this.ruleset.thresholds.r * this.getTileAmount(this.ruleset.dim),
-					this.ruleset.thresholds.g * this.getTileAmount(this.ruleset.dim),
-					this.ruleset.thresholds.b * this.getTileAmount(this.ruleset.dim),
-					this.ruleset.thresholds.a * this.getTileAmount(this.ruleset.dim)
+					this.ruleset.thresholds.r * tileAmount,
+					this.ruleset.thresholds.g * tileAmount,
+					this.ruleset.thresholds.b * tileAmount,
+					this.ruleset.thresholds.a * tileAmount
 				)
 			)
 			.withUniform("decay", 0.96)
@@ -223,7 +225,7 @@ export class Automaton {
 	}
 
 	getOutputMaterial() {
-		if (!this.finalMat) {
+		if (!this.outputMaterial) {
 			this.color1 = getRandomUniqueColor()
 			this.color2 = getRandomUniqueColor()
 			this.color3 = getRandomUniqueColor()
@@ -236,7 +238,7 @@ export class Automaton {
 
 			let states = this.ruleset.states
 
-			this.finalMat = new THREE.ShaderMaterial({
+			this.outputMaterial = new THREE.ShaderMaterial({
 				uniforms: {
 					diffuseTexture: {
 						value: null
@@ -251,6 +253,7 @@ export class Automaton {
 					trailOpacity: { value: 1 },
 					isMonochrome: { value: 1 },
 					isRaw: { value: false },
+					blending: { value: this.ruleset.blending },
 					states: {
 						value: new THREE.Vector4(states.r, states.g, states.b, states.a)
 					},
@@ -265,7 +268,7 @@ export class Automaton {
 				fragmentShader: FINAL_RENDER_FRAGMENT
 			})
 		}
-		return this.finalMat
+		return this.outputMaterial
 	}
 
 	render() {
@@ -317,7 +320,7 @@ export class Automaton {
 				.name(col)
 				.onChange(t => {
 					this.ruleset.states[col] = t
-					this.finalMat.uniforms.states.value = new THREE.Vector4(
+					this.outputMaterial.uniforms.states.value = new THREE.Vector4(
 						this.ruleset.states.r,
 						this.ruleset.states.g,
 						this.ruleset.states.b,
@@ -379,6 +382,13 @@ export class Automaton {
 		folder.add(this, "redrawReset").name("Redraw")
 		// folder.add(this, "redrawRandom").name("Random start")
 		folder.add(this, "copyUrlOfCurrentRuleset").name("Share")
+
+		folder
+			.add(this.ruleset, "blending", 0, 1, 0.01)
+			.name("Blending")
+			.onChange(t => {
+				this.getOutputMaterial().uniforms.blending.value = t
+			})
 
 		let colors = ["color1", "color2", "color3", "color4"]
 		colors.forEach(color => {
