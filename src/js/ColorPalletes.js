@@ -44,7 +44,6 @@ var colorPalletes = {
 }
 let thePallete =
 	Object.keys(colorPalletes)[rndInt(0, Object.keys(colorPalletes).length - 1)]
-console.log(thePallete)
 export const getRandomColor = () =>
 	colorPalletes[thePallete][rndInt(0, colorPalletes[thePallete].length - 1)]
 
