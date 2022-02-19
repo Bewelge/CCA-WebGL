@@ -62,7 +62,7 @@ export const getStartCanvas = (w, h, settings = {}) => {
 			startPattern.randomNestedRects()
 		}
 		if (rndFloat(0, 1) < settings.arcs) {
-			// startPattern.randomArcs()
+			startPattern.randomArcs()
 		}
 		if (rndFloat(0, 1) < settings.rects) {
 			startPattern.randomRects()
