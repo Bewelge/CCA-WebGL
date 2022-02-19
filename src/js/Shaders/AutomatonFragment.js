@@ -32,7 +32,7 @@ uniform sampler2D points;
 					
 					for( float j = -dim; j <= dim; j++ ){
 						 
-						vec2 coord = vUv + vec2( i , j ) /resolution;
+						vec2 coord = vUv + vec2( i * reach, j * reach ) /resolution;
 						vec4 val = texture2D( input_texture,  coord ).rgba;
 						 
 						if ( val.r > self.r ){
