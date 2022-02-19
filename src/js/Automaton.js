@@ -62,7 +62,7 @@ export class Automaton {
 		this.ruleset = ruleset
 
 		this.reinitAutomaton()
-		this.redrawData()
+		this.redrawReset()
 	}
 	reinitAutomaton() {
 		//pass the automaton shader the inital pattern
@@ -114,10 +114,10 @@ export class Automaton {
 					this.getOutputMaterial().uniforms.isRaw.value = this.isRaw
 					break
 				case "KeyN":
-					this.resetData()
+					this.redrawReset()
 					break
 				case "KeyD":
-					this.redrawData()
+					this.resetData()
 					break
 			}
 		})
@@ -376,7 +376,7 @@ export class Automaton {
 				})
 		})
 		folder.add(this, "resetData").name("Reset")
-		folder.add(this, "redrawData").name("Redraw")
+		folder.add(this, "redrawReset").name("Redraw")
 		folder.add(this, "redrawRandom").name("Random start")
 		folder.add(this, "copyUrlOfCurrentRuleset").name("Share")
 
@@ -401,7 +401,7 @@ export class Automaton {
 		this.randomDraw = true
 		this.automatonShader.setData(this.getStartTextureData())
 	}
-	redrawData() {
+	redrawReset() {
 		this.startTexData = null
 		this.randomDraw = false
 		this.automatonShader.setData(this.getStartTextureData())
