@@ -1,7 +1,7 @@
 import { Automaton } from "./Automaton.js"
 import { Stats } from "../lib/stats.module.js"
 import { getRandomRuleset, Ruleset } from "./Ruleset.js"
-import { chipset, variants } from "./variants.js"
+import { chipset, getRandomVariant, variants } from "./variants.js"
 import { ThreeJsRender } from "./ThreeJsRenderer.js"
 import { getGUI } from "./Gui.js"
 
