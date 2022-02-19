@@ -26,7 +26,7 @@ import {
 } from "./ColorPalletes.js"
 
 import { getStartCanvas } from "./StartingPattern.js"
-import { getGUI } from "./gui.js"
+import { getGUI } from "./Gui.js"
 
 window.$fxhashFeatures = {
 	"Color Set": getThePalette()
