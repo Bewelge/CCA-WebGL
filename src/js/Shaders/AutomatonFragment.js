@@ -117,9 +117,9 @@ uniform sampler2D points;
 
 			//Not using modulo for some values actually gives interesting results. Not exactly sure why.
 			self.r = mod(self.r,states.r);
-			// self.g = mod(self.g,states.g);
-			// self.b = mod(self.b,states.b);
-			// self.a = mod(self.a,states.a);
+			self.g = mod(self.g,states.g);
+			self.b = mod(self.b,states.b);
+			self.a = mod(self.a,states.a);
 
 
 			//Save the new states
