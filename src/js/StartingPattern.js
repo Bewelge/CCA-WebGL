@@ -2,8 +2,8 @@ import { getRandomColor } from "./ColorPalletes.js"
 import { rndFloat, rndInt, PI2, Vec2 } from "./Util.js"
 
 let defSettings = {
-	lines: rndInt(1, 1),
-	arcs: rndInt(0, 0),
+	lines: rndInt(0, 0),
+	arcs: rndInt(0, 1),
 	rects: rndInt(1, 1),
 	nestedRects: rndInt(1, 1),
 
