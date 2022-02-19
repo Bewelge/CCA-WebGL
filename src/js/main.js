@@ -1,7 +1,7 @@
 import { Automaton } from "./Automaton.js"
 import { Stats } from "../lib/stats.module.js"
 import { getRandomRuleset, Ruleset } from "./Ruleset.js"
-import { chipset, getRandomVariant, variants } from "./variants.js"
+import { chipset, variants } from "./variants.js"
 import { ThreeJsRender } from "./ThreeJsRenderer.js"
 import { getGUI } from "./Gui.js"
 
@@ -13,7 +13,7 @@ var threeWrap
 
 window.onload = () => {
 	width = window.innerWidth
-	height = window.innerHeight
+	height = window.innerWidth
 
 	//spawn the three.js wrapper that holds the three.js scene, renderer and camera.
 	threeWrap = new ThreeJsRender(width, height)
@@ -23,7 +23,7 @@ window.onload = () => {
 	let w = width / dim
 	let h = height / dim
 	for (let i = 0; i < dim * dim; i++) {
-		let variant = new Ruleset(getRandomVariant())
+		let variant = new Ruleset(chipset) // getRandomVariant())
 		let ruleset = variant // getRandomRuleset()
 
 		//initiate automaton. If there are multiple - pass it its position in the scene.
@@ -39,15 +39,15 @@ window.onload = () => {
 		automatons.push(renderer)
 	}
 
-	threeWrap.renderer.domElement.addEventListener("click", ev => {
-		let x = ev.clientX
-		let y = ev.clientY
-		let col = Math.floor(x / w)
-		let row = Math.floor(y / h)
-		let ind = col + row * dim
-		spawnNewGeneration(automatons[ind].ruleset.copy())
-		automatons[ind].copyUrlOfCurrentRuleset()
-	})
+	// threeWrap.renderer.domElement.addEventListener("click", ev => {
+	// 	let x = ev.clientX
+	// 	let y = ev.clientY
+	// 	let col = Math.floor(x / w)
+	// 	let row = Math.floor(y / h)
+	// 	let ind = col + row * dim
+	// 	spawnNewGeneration(automatons[ind].ruleset.copy())
+	// 	automatons[ind].copyUrlOfCurrentRuleset()
+	// })
 	//addVariantsGui()
 	window.addEventListener("keydown", e => {
 		switch (e.code) {
