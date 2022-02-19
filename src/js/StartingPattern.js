@@ -1,5 +1,4 @@
 import { getRandomColor } from "./ColorPalletes.js"
-import { getGUI } from "./gui.js"
 import { rndFloat, rndInt, PI2, Vec2 } from "./Util.js"
 
 let defSettings = {
