@@ -1,37 +1,9 @@
 import { Automaton } from "./Automaton.js"
 import { Stats } from "../lib/stats.module.js"
 import { getRandomRuleset, Ruleset } from "./Ruleset.js"
-import { PI, PI2, rndFloat, rndInt } from "./Util.js"
-import {
-	alienRace,
-	anotherSet,
-	bluepurplestructure,
-	blueStructures,
-	chipset,
-	coolMachines0,
-	coolMachines1,
-	coolTex,
-	creature,
-	fineStructures,
-	fineStructures2,
-	flowfields,
-	flowfields2,
-	getRandomVariant,
-	idunno,
-	justAnother,
-	lessHecticRace,
-	niceAbstract,
-	niceCycle,
-	pixelCity,
-	productionLine,
-	scribbled,
-	signs,
-	spaceShip,
-	starrySpace,
-	variant12,
-	webs
-} from "./variants.js"
+import { chipset, variants } from "./variants.js"
 import { ThreeJsRender } from "./ThreeJsRenderer.js"
+import { getGUI } from "./Gui.js"
 
 let width, height
 var paused = false
@@ -53,6 +25,7 @@ window.onload = () => {
 	for (let i = 0; i < dim * dim; i++) {
 		let variant = new Ruleset(getRandomVariant())
 		let ruleset = variant // getRandomRuleset()
+
 		//initiate automaton. If there are multiple - pass it its position in the scene.
 		let renderer = new Automaton(
 			threeWrap,
@@ -65,6 +38,7 @@ window.onload = () => {
 		)
 		automatons.push(renderer)
 	}
+
 	threeWrap.renderer.domElement.addEventListener("click", ev => {
 		let x = ev.clientX
 		let y = ev.clientY
@@ -74,6 +48,7 @@ window.onload = () => {
 		spawnNewGeneration(automatons[ind].ruleset.copy())
 		automatons[ind].copyUrlOfCurrentRuleset()
 	})
+	//addVariantsGui()
 	window.addEventListener("keydown", e => {
 		switch (e.code) {
 			case "Space":
@@ -90,10 +65,11 @@ window.onload = () => {
 }
 
 function spawnNewGeneration(rules) {
-	automatons.forEach((auto, i) =>
-		i < automatons.length / 2
-			? auto.setRuleset(rules.copy().mutate(rndFloat(0.3, 0.3), 0))
-			: auto.setRuleset(rules.copy().mutate(0, rndFloat(0.3, 0.3)))
+	automatons.forEach(
+		(auto, i) =>
+			i < automatons.length / 2
+				? auto.setRuleset(rules.copy()) //.mutate(rndFloat(0.3, 0.3), 0))
+				: auto.setRuleset(rules.copy()) //.mutate(0, rndFloat(0.3, 0.3)))
 	)
 }
 
@@ -115,6 +91,17 @@ function render() {
 	window.requestAnimationFrame(render)
 }
 
+function addVariantsGui() {
+	let gui = getGUI()
+	let folder = gui.addFolder("Variants")
+	for (let key in variants) {
+		let obj = { func: loadVariant.bind(this, key) }
+		folder.add(obj, "func").name(key)
+	}
+}
+function loadVariant(variant) {
+	spawnNewGeneration(new Ruleset(variants[variant]))
+}
 console.log(document.title + " - By Bewelge")
 console.log("")
 console.log("Follow me on Twitter at:")
@@ -123,11 +110,12 @@ console.log("")
 console.log("Or check out my GitHub to find more projects of mine.")
 console.log("https://github.com/Bewelge")
 console.log("")
-console.log("Github repo of underlying simulation:")
-console.log("https://github.com/Bewelge/Physarum-WebGL")
+console.log("Github project:")
+console.log("https://github.com/Bewelge/CCA-WebGL")
 
 console.log("")
 console.log("Controls:")
+console.log("Space - Pause/Unpause")
 console.log("S - Download Image")
 console.log("R - Show raw output")
 console.log("D - Restart automaton")

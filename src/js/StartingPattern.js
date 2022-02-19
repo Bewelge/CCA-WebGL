@@ -94,7 +94,7 @@ class StartingPattern {
 		return this.settings.startColor
 	}
 	getLineWidth() {
-		return rndFloat(0.001, 0.001) * this.w
+		return rndFloat(0.001, 0.005) * this.w
 	}
 	setStyle() {
 		let fs =
