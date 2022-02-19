@@ -377,7 +377,7 @@ export class Automaton {
 		})
 		folder.add(this, "resetData").name("Reset")
 		folder.add(this, "redrawReset").name("Redraw")
-		folder.add(this, "redrawRandom").name("Random start")
+		// folder.add(this, "redrawRandom").name("Random start")
 		folder.add(this, "copyUrlOfCurrentRuleset").name("Share")
 
 		let colors = ["color1", "color2", "color3", "color4"]
