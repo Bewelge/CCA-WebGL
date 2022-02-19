@@ -28,10 +28,6 @@ import {
 import { getStartCanvas } from "./StartingPattern.js"
 import { getGUI } from "./Gui.js"
 
-window.$fxhashFeatures = {
-	"Color Set": getThePalette()
-}
-
 var forShow = false
 /**
  * This class handles the automaton logic. All shaders initiation and updating is done here.
