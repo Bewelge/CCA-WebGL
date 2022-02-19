@@ -17,7 +17,7 @@ export class Ruleset {
 		this.thresholds = opts.thresholds
 
 		//How flat the output colors are rendered.
-		this.blending = opts.blending
+		this.blending = opts.blending || 0.5
 
 		this.isOnlyRed = opts.isOnlyRed
 
