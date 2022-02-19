@@ -253,6 +253,7 @@ export class Automaton {
 					trailOpacity: { value: 1 },
 					isMonochrome: { value: 1 },
 					isRaw: { value: false },
+					isOnlyRed: { value: this.ruleset.isOnlyRed ? true : false },
 					blending: { value: this.ruleset.blending },
 					states: {
 						value: new THREE.Vector4(states.r, states.g, states.b, states.a)

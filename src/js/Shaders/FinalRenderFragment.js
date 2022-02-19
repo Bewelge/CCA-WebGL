@@ -7,6 +7,8 @@ export const FINAL_RENDER_FRAGMENT = `
 			uniform vec3 color3;
 			uniform vec3 color4;
 			uniform bool isRaw;
+			uniform bool isOnlyRed;
+			uniform float blending;
 			varying vec2 vUv;
 			
 			vec4 getColorForTrail(vec4 trail,vec4 dithered) {
@@ -17,31 +19,48 @@ export const FINAL_RENDER_FRAGMENT = `
 				float valB =  abs(trail.b) / states.b;
 				float valA =  abs(trail.a) / states.a;
 				
+
+				// float val = max(max(max(valR,valG),valB),valA);
+				// vec4 col = vec4( val,val,val,1.)  ;
+
 				vec4 col = abs(valR - 0.5) / 0.5 * vec4(color1,1.);
 
+				vec4 ratio = vec4(1.);
+
+				if (isOnlyRed) {
 				//For this automaton we only care about the red values for the final render. So we assign each of the four output colors to a 25% range of red.
 				if (valR < 1. / 4.) {
-					col = mix(vec4(color1,1.),vec4(1.-valR/0.25),0.5) ; 
+					col = vec4(color1,1.);
+					ratio = vec4(1. - abs(valR/0.25 - 0.5 )/0.5); 
 				} else if (valR <   2. / 4.) {
-					col = mix(vec4(color2,1.),vec4(1.-(valR-0.25) / 0.25 ),0.5); 
+					col = vec4(color2,1.);
+					ratio = vec4( 1. - abs((valR-0.25)/0.25 -0.5)/0.5 ); 
 				} else if (valR <  3. / 4.) {
-					col = mix(vec4(color3,1.),vec4(1.-(valR-0.5) / 0.25 ),0.5); 
+					col = vec4(color3,1.);
+					ratio = vec4(1. - abs((valR-0.5) / 0.25 - 0.5) / 0.5 ); 
 				}else if (valR <  4. / 4.) {
-					col = mix(vec4(color4,1.),vec4(1.-(valR-0.75) / 0.25 ),0.5);
-				}   
-				
+					col = vec4(color4,1.);
+					ratio = vec4(1. - abs((valR-0.75) / 0.25-0.5)/0.5 );
+				}  
+				 
 
-				//Use this if we want to always display the most dominant color.
-				// // col =  abs(valR - 0.5) / 0.5 * vec4(color1,1.);
-				// if (valR > valG && valR > valB && valR > valA) {
-				// 	col =  abs(valR - 0.5) / 0.5 * vec4(color1,1.);
-				// }  else if (valG > valR && valG > valB && valG > valA) {
-				// 	col = abs(valG - 0.5) / 0.5 * vec4(color2,1.);
-				// } else if (valB > valG && valB > valR && valB > valA) {
-				// 	col = abs(valB - 0.5) / 0.5 * vec4(color3,1.);
-				// } else if (valA > valR && valA > valG && valA > valB) {
-				// 	col = abs(valA-0.5) / 0.5 * vec4(color4,1.);
-				// } 
+				col = mix(col,ratio,blending);
+
+			} else {
+
+					//Use this if we want to always display the most dominant color.
+					// col =  abs(valR - 0.5) / 0.5 * vec4(color1,1.);
+					if (valR > valG && valR > valB && valR > valA) {
+						col =  abs(valR - 0.5) / 0.5 * vec4(color1,1.);
+					}  else if (valG > valR && valG > valB && valG > valA) {
+						col = abs(valG - 0.5) / 0.5 * vec4(color2,1.);
+					} else if (valB > valG && valB > valR && valB > valA) {
+						col = abs(valB - 0.5) / 0.5 * vec4(color3,1.);
+					} else if (valA > valR && valA > valG && valA > valB) {
+						col = abs(valA-0.5) / 0.5 * vec4(color4,1.);
+					} 
+				}
+
 
 				//No dithering. We want sharp edges.
 				return   mix(col,dithered,0. );
@@ -74,9 +93,9 @@ export const FINAL_RENDER_FRAGMENT = `
 
 				vec4 col = getColorForTrail(trail,acc);
 			
-				//if all surrounding tiles have the same color, we'll set this color to black. This helps reducing the flickering.
+				//if all surrounding tiles have the same color, we'll set this color to some constant color. This helps reducing the flickering.
 				if (allTheSame == count) {
-					col =   vec4(0.);
+					col =   vec4(color1,1.);
 				}
 				//Set alpha of output color to 1. to get brighter colors. 
 				col.a = 1.;

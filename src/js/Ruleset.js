@@ -19,6 +19,8 @@ export class Ruleset {
 		//How flat the output colors are rendered.
 		this.blending = opts.blending
 
+		this.isOnlyRed = opts.isOnlyRed
+
 		//Operations that determine the behavior of a cell. Count is the number of neighbours that have a higher value than the cell itself.
 		//count is above threshold (op0)
 		//count is 0 (op1)
@@ -43,6 +45,7 @@ export class Ruleset {
 			ops0: this.ops0,
 			ops1: this.ops1,
 			ops2: this.ops2,
+			isOnlyRed: this.isOnlyRed,
 			startSettings: Object.assign({}, this.startSettings)
 		})
 	}
