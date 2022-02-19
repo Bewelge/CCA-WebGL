@@ -1,4 +1,5 @@
-import { rndFloat, rndInt } from "./Util.js"
+import { getRandomStartSettings } from "./StartingPattern.js"
+import { rndFloat, rndInt, peg } from "./Util.js"
 
 //Ruleset defining the CCAs' behavior.
 export class Ruleset {
@@ -9,15 +10,15 @@ export class Ruleset {
 		this.dim = opts.dim
 		//How many states does the cca cycle through
 		this.states = opts.states
-		//Multiplier
+		//Multiplier of neighbour distance that will be analyzed. reach = 2 means neighbours with distance 2, 4, 6 ... will be analysed.
 		this.reach = opts.reach
 		//Thresholds for RGBA-values of how many neighbors
 		//need to have a higher value for the cell to evolve
 		this.thresholds = opts.thresholds
 
-		//Operations that determine the behavior when
-		//cell is above threshold (op0)
-		//cell value is 0 (op1)
+		//Operations that determine the behavior of a cell. Count is the number of neighbours that have a higher value than the cell itself.
+		//count is above threshold (op0)
+		//count is 0 (op1)
 		//custom condition is met (op2)
 
 		//These operations are used to build the fragment shader that computes
@@ -25,6 +26,68 @@ export class Ruleset {
 		this.ops0 = opts.ops0
 		this.ops1 = opts.ops1
 		this.ops2 = opts.ops2
+
+		this.startSettings = opts.startSettings
+	}
+	copy() {
+		//create a new ruleset object with the same attributes.
+		return new Ruleset({
+			imgDt: this.imgDt,
+			dim: this.dim,
+			states: Object.assign({}, this.states),
+			reach: this.reach,
+			thresholds: Object.assign({}, this.thresholds),
+			ops0: this.ops0,
+			ops1: this.ops1,
+			ops2: this.ops2,
+			startSettings: Object.assign({}, this.startSettings)
+		})
+	}
+	mutate(startPatternRate, settingsRate) {
+		//slightly mutate the attributes of a given ruleset.
+		let cols = ["r", "g", "b", "a"]
+		if (rndFloat() < settingsRate) {
+			this.dim = peg(this.dim + rndFloat(-1, 1), 0, 100)
+		}
+		if (rndFloat() < settingsRate) {
+			this.reach = peg(this.reach + rndFloat(-1, 1), 0, 3)
+		}
+		if (rndFloat() < settingsRate) {
+			cols.forEach(
+				col =>
+					(this.states[col] = peg(
+						this.states[col] + rndInt(-150, 150),
+						0,
+						1000
+					))
+			)
+		}
+		if (rndFloat() < settingsRate) {
+			cols.forEach(
+				col =>
+					(this.thresholds[col] = peg(
+						this.thresholds[col] + rndInt(-0.1, 0.1),
+						0,
+						1
+					))
+			)
+		}
+		for (let key in this.startSettings) {
+			if (key != "startColor") {
+				if (rndFloat(0, 1) < startPatternRate) {
+					this.startSettings[key] = peg(
+						this.startSettings[key] + rndInt(-1, 1),
+						0,
+						1
+					)
+				}
+			}
+		}
+
+		// ops0
+		// ops1
+		// ops2
+		return this
 	}
 }
 
@@ -93,7 +156,8 @@ export const getRandomRuleset = () =>
 			g: "",
 			b: "",
 			a: ""
-		}
+		},
+		startSettings: getRandomStartSettings()
 	})
 
 const ops = ["+=", "=", "-="]

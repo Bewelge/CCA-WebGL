@@ -1,4 +1,12 @@
-import { PI05, PI2, rndFloat, rndInt, saveImg, Vec2 } from "./Util.js"
+import {
+	getUrlParamRuleset,
+	PI05,
+	PI2,
+	rndFloat,
+	rndInt,
+	saveImg,
+	Vec2
+} from "./Util.js"
 import * as THREE from "../lib/three.module.js"
 import { EffectComposer } from "../lib/EffectComposer/EffectComposer.js"
 import GUI from "../lib/lil-gui.esm.js"
@@ -24,29 +32,70 @@ window.$fxhashFeatures = {
 	"Color Set": getThePalette()
 }
 
-const queryString = window.location.search
-const urlParams = new URLSearchParams(queryString)
-let isPreview = urlParams.get("preview")
-let urlRuleset = urlParams.get("rules")
-
 var forShow = false
 /**
  * This class handles the automaton logic. All shaders initiation and updating is done here.
  */
 export class Automaton {
-	constructor(ruleSet, x = 0, y = 0, w, h, number = 0) {
+	constructor(threeWrap, ruleSet, x = 0, y = 0, w, h, number = 0) {
+		let urlRuleset = getUrlParamRuleset()
+
 		//If we pass a ruleset by url, it'll override the passed ruleset
 		if (urlRuleset) {
-			this.ruleset = JSON.parse(atob(urlRuleset))
+			this.ruleset = urlRuleset
+			console.log(this.ruleset)
 		} else {
 			this.ruleset = ruleSet
 		}
 		this.width = w
 		this.height = h
-		//Position of the mesh with the shader material in the scene. Only relevant if we're spawning multiple automatons at once.
+
+		//Position of the mesh with the shader material in the scene.
+		//Only relevant if we're spawning multiple automatons at once.
 		this.x = x
 		this.y = y
 		this.number = number
+
+		this.init(threeWrap)
+	}
+	setRuleset(ruleset) {
+		this.ruleset = ruleset
+
+		this.reinitAutomaton()
+		this.redrawData()
+	}
+	reinitAutomaton() {
+		//pass the automaton shader the inital pattern
+		this.automatonShader.setData(this.getStartTextureData())
+
+		//set uniforms of automaton shader
+		this.setAutomatonUniforms()
+		this.automatonShader.material.uniforms.reach.value = this.ruleset.reach
+		this.automatonShader.material.fragmentShader =
+			this.getAutomatonFragmentShader()
+
+		this.automatonShader.material.needsUpdate = true
+	}
+
+	setAutomatonUniforms() {
+		this.automatonShader.material.uniforms.states.value = new THREE.Vector4(
+			this.ruleset.states.r,
+			this.ruleset.states.g,
+			this.ruleset.states.b,
+			this.ruleset.states.a
+		)
+		this.finalMat.uniforms.states.value = new THREE.Vector4(
+			this.ruleset.states.r,
+			this.ruleset.states.g,
+			this.ruleset.states.b,
+			this.ruleset.states.a
+		)
+		this.automatonShader.material.uniforms.threshold.value = new THREE.Vector4(
+			this.ruleset.thresholds.r * this.getTileAmount(this.ruleset.dim),
+			this.ruleset.thresholds.g * this.getTileAmount(this.ruleset.dim),
+			this.ruleset.thresholds.b * this.getTileAmount(this.ruleset.dim),
+			this.ruleset.thresholds.a * this.getTileAmount(this.ruleset.dim)
+		)
 	}
 
 	init(threeWrap) {
@@ -60,17 +109,14 @@ export class Automaton {
 
 		window.addEventListener("keydown", e => {
 			switch (e.code) {
-				case "KeyS":
-					saveImg(this.renderer.domElement)
-					break
-				case "Space":
+				case "KeyR":
 					this.isRaw = !this.isRaw
 					this.getOutputMaterial().uniforms.isRaw.value = this.isRaw
 					break
-				case "KeyD":
+				case "KeyN":
 					this.resetData()
 					break
-				case "KeyR":
+				case "KeyD":
 					this.redrawData()
 					break
 			}
@@ -80,7 +126,11 @@ export class Automaton {
 	getStartTextureData() {
 		//Lazily load the starting texture / seed....
 		if (!this.startTexData) {
-			let cnv = getStartCanvas(this.width, this.height, this.randomDraw)
+			let cnv = getStartCanvas(
+				this.width,
+				this.height,
+				this.ruleset.startSettings
+			)
 			let c = cnv.getContext("2d")
 
 			let dt = c.getImageData(0, 0, this.width, this.height)
@@ -91,16 +141,18 @@ export class Automaton {
 		// ... and put it into an Float32Array. Since the imageData on the canvas only stores values from 0-255 (and 0-1 for alpha) we have to transform the data.
 		let data = new Float32Array(this.width * this.height * 4)
 
+		let r = this.ruleset.states.r / 255
+		let g = this.ruleset.states.g / 255
+		let b = this.ruleset.states.b / 255
+		let a = this.ruleset.states.a / 1
+		let src = this.startTexData.data
 		for (let j = 0; j < this.width; j++) {
 			for (let i = 0; i < this.height; i++) {
 				let ind = j * 4 + i * this.width * 4
-				data[ind] = (this.startTexData.data[ind] / 255) * this.ruleset.states.r
-				data[ind + 1] =
-					(this.startTexData.data[ind + 1] / 255) * this.ruleset.states.g
-				data[ind + 2] =
-					(this.startTexData.data[ind + 2] / 255) * this.ruleset.states.b
-				data[ind + 3] =
-					(this.startTexData.data[ind + 3] / 1) * this.ruleset.states.a
+				data[ind] = src[ind] * r
+				data[ind + 1] = src[ind + 1] * g
+				data[ind + 2] = src[ind + 2] * b
+				data[ind + 3] = src[ind + 3] * a
 			}
 		}
 		return data
@@ -152,7 +204,7 @@ export class Automaton {
 	getAutomatonFragmentShader() {
 		var shd = AUTOMATON_FRAGMENT.replace(
 			"#DIM#",
-			"const float dim = " + this.ruleset.dim + ".;"
+			"const float dim = " + Math.floor(this.ruleset.dim) + ".;"
 		)
 
 		shd = shd.replace("#op0R#", this.ruleset.ops0.r)
@@ -220,7 +272,6 @@ export class Automaton {
 		if (!this.ticker) {
 			this.ticker = 0
 			this.mousePlaceColor = 1
-			this.tickDur = isPreview ? 1 : rndInt(50, 150)
 			this.spawned = 0
 		}
 		if (this.ticker % this.tickDur == 0) {
@@ -232,15 +283,7 @@ export class Automaton {
 		this.outputMesh.material.uniforms.diffuseTexture.value =
 			this.automatonShader.getTexture()
 
-		// this.renderer.setSize(this.width, this.height)
-		// this.renderer.clear()
-
-		// this.renderer.render(this.scene, this.camera)
-		// this.composer.render(this.scene, this.camera)
-
-		this.automatonShader.setUniform("time", this.ticker) //Math.max(0, this.ticker - 10))
-		// this.finalMesh.material.uniforms.states.value = this.ticker
-		// this.diffuseShader.setUniform("states", this.ticker)
+		this.automatonShader.setUniform("time", this.ticker)
 	}
 	getTileAmount(n) {
 		let sum = 0
@@ -365,8 +408,8 @@ export class Automaton {
 	}
 	copyUrlOfCurrentRuleset() {
 		let str = this.getEncodedRuleset()
-		console.log(str)
-		navigator.clipboard.writeText(str).then(
+		console.log(window.location.href + "?rules=" + str)
+		navigator.clipboard.writeText(window.location.href + "?rules=" + str).then(
 			p => console.log("Copied to clipboard"),
 			p => console.log("Failed to copy.")
 		)

@@ -19,6 +19,7 @@ import {
 	getThreeScene,
 	orthographicCamera
 } from "./ThreeJsUtils.js"
+import { saveImg } from "./Util.js"
 
 export class ThreeJsRender {
 	constructor(width, height) {
@@ -41,6 +42,10 @@ export class ThreeJsRender {
 		this.composer = new EffectComposer(this.renderer)
 		const renderPass = new RenderPass(this.scene, this.camera)
 		this.composer.addPass(renderPass)
+
+		window.addEventListener("keydown", e =>
+			e.code == "KeyS" ? saveImg(this.renderer.domElement) : null
+		)
 
 		// const glitchPass = new AfterimagePass(0.95)
 

@@ -15,12 +15,16 @@ uniform sampler2D points;
 			vec2 res = 1. / resolution;
 			vec4 pixelPoint = texture2D(points, vUv);
 			
+
+			//dim is the range in which neighbour tiles will be analyzed. 
 			#DIM#
 			float weight = 1. / pow( 2. * dim + 1., 2. );
 		 	
 			vec4 inputPixl = texture2D( input_texture,  vUv);
 			vec4 self = inputPixl;
 		 
+			//Loop neighbours and count how many tiles have a value higher than the tile itself. In traditional cyclical automatons the condition is that the neighbour
+			//value is exactly one higher. I opted for this less stringent condition as it produces more chaotic patterns.
 			vec4 count = vec4(0.);
 			float tot = 0.; 
 
@@ -50,7 +54,8 @@ uniform sampler2D points;
 				} 
 
 			 
-		 
+		 	//For each color value we check if the amount of neighbours with a higher value is higher than the threshold value. If that's the case we execute operation0 of that color.
+			//If the amount is equal 0 we execute operation1. Operation2 can be used for additional rules but isn't used in this iteration.
 			if (count.r > threshold.r) {
 				#op0R#
 			}  else if (count.r == 0.) {
@@ -84,6 +89,7 @@ uniform sampler2D points;
 			}
 			
 	 
+			//Wrap each color value between 0 and its amount of states.
 			if (self.r > states.r - 1.) {
 				self.r -= states.r - 1.;
 			} 
@@ -109,10 +115,14 @@ uniform sampler2D points;
 				self.a = states.a - 1.;
 			} 
 
+			//Not using modulo for some values actually gives interesting results. Not exactly sure why.
 			self.r = mod(self.r,states.r);
-			self.g = mod(self.g,states.g);
-			self.b = mod(self.b,states.b);
-			self.a = mod(self.a,states.a);
+			// self.g = mod(self.g,states.g);
+			// self.b = mod(self.b,states.b);
+			// self.a = mod(self.a,states.a);
+
+
+			//Save the new states
 			gl_FragColor = self;
 			
 			

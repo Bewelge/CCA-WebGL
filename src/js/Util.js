@@ -1,9 +1,10 @@
-function rndFloat(min, max) {
+function rndFloat(min = 0, max = 1) {
 	return min + (max - min) * fxrand()
 }
 function rndInt(min, max) {
 	return Math.round(min + (max - min) * fxrand())
 }
+export const peg = (num, min, max) => Math.max(min, Math.min(max, num))
 
 function isSafari() {
 	return (
@@ -117,8 +118,8 @@ export const saveImg = cnvEl => {
 	let a = document.createElement("a")
 
 	let cnv = document.createElement("canvas")
-	cnv.width = this.renderer.domElement.width
-	cnv.height = this.renderer.domElement.height
+	cnv.width = cnvEl.width
+	cnv.height = cnvEl.height
 	let c = cnv.getContext("2d")
 	c.fillStyle = "black"
 	c.fillRect(0, 0, cnv.width, cnv.height)
@@ -128,7 +129,22 @@ export const saveImg = cnvEl => {
 	a.download = document.title + " by Bewelge"
 	a.click()
 }
+const getUrlParams = () => new URLSearchParams(window.location.search)
+export const isPreview = () => {
+	let params = getUrlParams()
+	if (params) {
+		return params.get("preview")
+	}
+}
+export const getUrlParamRuleset = () => {
+	let params = getUrlParams()
+	if (params) {
+		let rules = params.get("rules")
+		if (rules) return JSON.parse(atob(rules))
+	}
+}
 
+//Early expiremnt. Don't want to throw him away.
 const drawStickman = () => {
 	let head = new Vec2(width / 2, height / 2)
 	let bottom = head.copy().addAngle(-PI05, width / 9)
