@@ -740,31 +740,31 @@ export const justAnother = {
 }
 
 export const chipset = {
-	dim: 1,
+	dim: rndInt(1, 1),
 	states: {
 		r: 701.9479218870401,
 		g: 50.0269453506917,
-		b: 209.90313321817666,
+		b: 1209.90313321817666,
 		a: 670.7030354533345
 	},
 	reach: 1,
 	thresholds: {
-		r: rndFloat(0.55, 0.55),
+		r: rndFloat(0.5, 0.55),
 		g: 0.6624542802106589,
 		b: 0.6799178668530658,
-		a: 0.8336273756343872
+		a: 0.6336273756343872
 	},
 	ops0: {
-		r: "self.r-=self.g;",
+		r: "self.r-=self.g ;",
 		g: "self.g+=self.b;",
-		b: "self.g*=self.b;self.b++;",
-		a: "self.a-=0.1;"
+		b: "self.b-=self.a;",
+		a: "self.a+=0.5;"
 	},
 	ops1: {
-		r: "self.r-=1.;",
+		r: "self.r-=1.; ",
 		g: "self.g=0.5;",
-		b: "self.b=10.;",
-		a: "self.a=-1.;"
+		b: "self.b=1.;",
+		a: "self.a=1.;"
 	},
 	ops2: {
 		r: "",
@@ -772,12 +772,14 @@ export const chipset = {
 		b: "",
 		a: ""
 	},
+	isOnlyRed: true,
+	blending: rndFloat(0.3, 0.5),
 	startSettings: {
 		lines: 0,
 		arcs: 1,
 		rects: 1,
 		nestedRects: 1,
-		color4Corners: 0,
+		color4Corners: 1,
 		dots: 0,
 		noise: 0,
 		startColor: "rgba(100,100,60,0.2792975651100278)"
@@ -1317,27 +1319,28 @@ export const flowfields = {
 		startColor: "rgba(251,250,0,1)"
 	}
 }
-export const getRandomVariant = () => variants[rndInt(0, variants.length - 1)]
-let variants = [
-	// variant12,
-	// scribbled,
-	// blueStructures,
-	// bluepurplestructure,
-	// alienRace,
-	// lessHecticRace,
-	// pixelCity,
-	// niceCycle,
-	// idunno,
-	// coolTex,
-	// anotherSet,
-	// webs,
-	// justAnother,
-	chipset
-	// spaceShip
-	// productionLine,
+export const getRandomVariant = () =>
+	variants[Object.keys(variants)[rndInt(0, Object.keys(variants).length - 1)]]
+export const variants = {
+	variant12,
+	scribbled,
+	blueStructures,
+	bluepurplestructure,
+	alienRace,
+	lessHecticRace,
+	pixelCity,
+	niceCycle,
+	idunno,
+	coolTex,
+	anotherSet,
+	webs,
+	justAnother,
+	chipset,
+	spaceShip,
+	productionLine,
 	// coolMachines0,
 	// coolMachines1,
-	// niceAbstract,
-	// starrySpace,
-	// signs
-]
+	niceAbstract,
+	starrySpace,
+	signs
+}
