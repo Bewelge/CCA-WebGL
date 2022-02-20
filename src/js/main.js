@@ -2,8 +2,12 @@ import { Automaton } from "./Automaton.js"
 import { Stats } from "../lib/stats.module.js"
 import { getRandomRuleset, Ruleset } from "./Ruleset.js"
 import { chipset, variants } from "./variants.js"
-import { ThreeJsRender } from "./ThreeJsRenderer.js"
-import { getGUI } from "./Gui.js"
+import { ThreeJsRender } from "./Util/ThreeJsRenderer.js"
+import { getGUI } from "./Util/Gui.js"
+import {
+	addResizeCallback,
+	getWindowDimensions
+} from "./Util/RenderDimensions.js"
 
 let width, height
 var paused = false
@@ -12,8 +16,9 @@ var automatons = []
 var threeWrap
 
 window.onload = () => {
-	width = window.innerWidth
-	height = window.innerWidth
+	let dims = getWindowDimensions()
+	width = dims.width
+	height = dims.height
 
 	//spawn the three.js wrapper that holds the three.js scene, renderer and camera.
 	threeWrap = new ThreeJsRender(width, height)
@@ -60,6 +65,14 @@ window.onload = () => {
 	stats.showPanel(0)
 	document.body.appendChild(stats.dom)
 
+	addResizeCallback(() => {
+		dims = getWindowDimensions()
+		threeWrap.setSize(dims.width, dims.height)
+		automatons.forEach(auto => {
+			auto.setSize(dims.width, dims.height)
+		})
+	})
+
 	//Start the render loop!
 	render()
 }
@@ -72,8 +85,13 @@ function spawnNewGeneration(rules) {
 				: auto.setRuleset(rules.copy()) //.mutate(0, rndFloat(0.3, 0.3)))
 	)
 }
-
+var ticker = 0
 function render() {
+	ticker++
+	if (ticker == 600) {
+		fxpreview()
+	}
+	// console.log(ticker)
 	stats.begin()
 	if (paused) {
 		window.requestAnimationFrame(render)
@@ -116,8 +134,10 @@ console.log("https://github.com/Bewelge/CCA-WebGL")
 console.log("")
 console.log("Controls:")
 console.log("Space - Pause/Unpause")
+console.log("F - Fill window")
 console.log("S - Download Image")
 console.log("R - Show raw output")
 console.log("D - Restart automaton")
 console.log("N - Restart with new pattern")
+console.log("Up/Down - Increase/Decrease blending")
 console.log("")

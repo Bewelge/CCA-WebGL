@@ -1,21 +1,7 @@
-import {
-	getUrlParamRuleset,
-	PI05,
-	PI2,
-	rndFloat,
-	rndInt,
-	saveImg,
-	Vec2
-} from "./Util.js"
+import { getUrlParamRuleset, rndFloat } from "./Util/Util.js"
 import * as THREE from "../lib/three.module.js"
-import { EffectComposer } from "../lib/EffectComposer/EffectComposer.js"
 import GUI from "../lib/lil-gui.esm.js"
-import { ShaderBuilder } from "./ShaderBuilder.js"
-import { PingPongShaderBuilder } from "./PingPongShaderBuilder.js"
-import { orthographicCamera, Vector } from "./ThreeJsUtils.js"
-import { MouseSpawnTexture } from "./MouseSpawnTexture.js"
-import { InfoDialog } from "./InfoDialog.js"
-import { INFO_TEXT } from "./InfoText.js"
+import { PingPongShaderBuilder } from "./Util/PingPongShaderBuilder.js"
 import { PASS_THROUGH_VERTEX } from "./Shaders/PassThroughVertex.js"
 import { AUTOMATON_FRAGMENT } from "./Shaders/AutomatonFragment.js"
 import { FINAL_RENDER_FRAGMENT } from "./Shaders/FinalRenderFragment.js"
@@ -23,10 +9,10 @@ import {
 	getRandomColor,
 	getRandomUniqueColor,
 	getThePalette
-} from "./ColorPalletes.js"
+} from "./Util/ColorPalletes.js"
 
 import { getStartCanvas } from "./StartingPattern.js"
-import { getGUI } from "./Gui.js"
+import { getGUI } from "./Util/Gui.js"
 
 var forShow = false
 /**
@@ -54,10 +40,17 @@ export class Automaton {
 
 		this.init(threeWrap)
 	}
+	setSize(width, height) {
+		this.width = width
+		this.height = height
+		this.automatonShader.setSize(width, height)
+		this.setRuleset(this.ruleset)
+	}
 	setRuleset(ruleset) {
 		this.ruleset = ruleset
 
 		this.reinitAutomaton()
+		console.log(123)
 		this.redrawReset()
 	}
 	reinitAutomaton() {
@@ -66,7 +59,6 @@ export class Automaton {
 
 		//set uniforms of automaton shader
 		this.setAutomatonUniforms()
-		this.automatonShader.material.uniforms.reach.value = this.ruleset.reach
 		this.automatonShader.material.fragmentShader =
 			this.getAutomatonFragmentShader()
 
@@ -74,6 +66,11 @@ export class Automaton {
 	}
 
 	setAutomatonUniforms() {
+		this.automatonShader.material.uniforms.reach.value = this.ruleset.reach
+		this.automatonShader.material.uniforms.resolution.value = new THREE.Vector2(
+			this.width,
+			this.height
+		)
 		this.automatonShader.material.uniforms.states.value = new THREE.Vector4(
 			this.ruleset.states.r,
 			this.ruleset.states.g,
@@ -114,6 +111,14 @@ export class Automaton {
 					break
 				case "KeyD":
 					this.resetData()
+					break
+				case "ArrowUp":
+					this.ruleset.blending = Math.min(1, this.ruleset.blending + 0.05)
+					this.outputMaterial.uniforms.blending.value = this.ruleset.blending
+					break
+				case "ArrowDown":
+					this.ruleset.blending = Math.max(0, this.ruleset.blending - 0.05)
+					this.outputMaterial.uniforms.blending.value = this.ruleset.blending
 					break
 			}
 		})

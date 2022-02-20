@@ -4,6 +4,7 @@ import { getRandomRuleset, Ruleset } from "./js/Ruleset.js"
 import { chipset, variants } from "./js/variants.js"
 import { ThreeJsRender } from "./js/ThreeJsRenderer.js"
 import { getGUI } from "./js/Gui.js"
+import { getWindowDimensions } from "./js/Util/RenderDimensions.js"
 
 let width, height
 var paused = false
@@ -12,8 +13,9 @@ var automatons = []
 var threeWrap
 
 window.onload = () => {
-	width = window.innerWidth
-	height = window.innerHeight
+	let windowDims = getWindowDimensions()
+	width = windowDims.width
+	height = windowDims.height
 
 	//spawn the three.js wrapper that holds the three.js scene, renderer and camera.
 	threeWrap = new ThreeJsRender(width, height)
