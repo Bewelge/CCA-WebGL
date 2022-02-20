@@ -2,8 +2,8 @@ import { Automaton } from "./js/Automaton.js"
 // import { Stats } from "./js/lib/stats.module.js"
 import { getRandomRuleset, Ruleset } from "./js/Ruleset.js"
 import { chipset, variants } from "./js/variants.js"
-import { ThreeJsRender } from "./js/ThreeJsRenderer.js"
-import { getGUI } from "./js/Gui.js"
+import { ThreeJsRender } from "./js/Util/ThreeJsRenderer.js"
+import { getGUI } from "./js/Util/Gui.js"
 import {
 	addResizeCallback,
 	getWindowDimensions
@@ -11,7 +11,6 @@ import {
 
 let width, height
 var paused = false
-var stats = Stats()
 var automatons = []
 var threeWrap
 
@@ -63,9 +62,6 @@ window.onload = () => {
 		}
 	})
 
-	stats.showPanel(0)
-	document.body.appendChild(stats.dom)
-
 	addResizeCallback(() => {
 		dims = getWindowDimensions()
 		threeWrap.setSize(dims.width, dims.height)
@@ -92,8 +88,6 @@ function render() {
 	if (ticker == 600) {
 		fxpreview()
 	}
-	// console.log(ticker)
-	stats.begin()
 	if (paused) {
 		window.requestAnimationFrame(render)
 		return
@@ -104,7 +98,6 @@ function render() {
 	})
 	//now render the scene with the meshes/automatons in it.
 	threeWrap.render()
-	stats.end()
 
 	//now keep doing it.
 	window.requestAnimationFrame(render)
