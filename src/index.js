@@ -4,8 +4,6 @@ import { getRandomRuleset, Ruleset } from "./js/Ruleset.js"
 import { chipset, variants } from "./js/variants.js"
 import { ThreeJsRender } from "./js/ThreeJsRenderer.js"
 import { getGUI } from "./js/Gui.js"
-import { getWindowDimensions } from "./js/Util/RenderDimensions.js"
-
 import {
 	addResizeCallback,
 	getWindowDimensions
