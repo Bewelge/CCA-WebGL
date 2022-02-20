@@ -1,5 +1,5 @@
-import { getRandomColor } from "./ColorPalletes.js"
-import { rndFloat, rndInt, PI2, Vec2 } from "./Util.js"
+import { getRandomColor } from "./Util/ColorPalletes.js"
+import { rndFloat, rndInt, PI2, Vec2 } from "./Util/Util.js"
 
 let defSettings = {
 	lines: rndInt(0, 0),
@@ -150,19 +150,22 @@ class StartingPattern {
 				c.stroke()
 				c.closePath()
 			}
-		}
-		if (rndFloat(0, 1) < 0.5) {
-			let p = new Vec2(rndInt(0, this.w), rndInt(0, this.h))
-			let w = 15 * rndInt(15, 50)
-			let c = this.c
-			c.strokeStyle =
-				"rgba(" + rndInt(0, 5) + "," + rndInt(0, 5) + "," + rndInt(0, 5) + ",1)"
-			for (let i = 0; i < w; i += 15) {
-				c.beginPath()
-				c.moveTo(p.x - w / 2, p.y - w / 2 + i)
-				c.lineTo(p.x + w / 2, p.y - w / 2 + i)
-				c.stroke()
-				c.closePath()
+			if (rndFloat(0, 1) < 0.5) {
+				c.strokeStyle =
+					"rgba(" +
+					rndInt(0, 5) +
+					"," +
+					rndInt(0, 5) +
+					"," +
+					rndInt(0, 5) +
+					",1)"
+				for (let i = 0; i < w; i += 15) {
+					c.beginPath()
+					c.moveTo(p.x - w / 2, p.y - w / 2 + i)
+					c.lineTo(p.x + w / 2, p.y - w / 2 + i)
+					c.stroke()
+					c.closePath()
+				}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 import { Ruleset } from "./Ruleset.js"
-import { rndFloat, rndInt } from "./Util.js"
+import { rndFloat, rndInt } from "./Util/Util.js"
 
 /**
  * Different interesting rulesets I've come across.

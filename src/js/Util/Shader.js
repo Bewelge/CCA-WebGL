@@ -1,5 +1,5 @@
-import * as THREE from "../lib/three.module.js"
-import { orthographicCamera } from "./ThreeJsUtils.js"
+import * as THREE from "../../lib/three.module.js"
+import { orthographicCamera } from "../ThreeJsUtils.js"
 export class Shader {
 	constructor(width, height, vertex, fragment, uniforms, attributes, options) {
 		this.width = width

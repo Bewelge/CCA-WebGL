@@ -1,4 +1,5 @@
-import * as THREE from "../lib/three.module.js"
+import * as THREE from "../../lib/three.module.js"
+import { getWindowDimensions } from "./RenderDimensions.js"
 
 export const Vector = arr => {
 	return arr.length == 2
@@ -21,8 +22,8 @@ export const getThreeRenderer = () => {
 			blending: THREE.NoBlending,
 			preserveDrawingBuffer: true
 		})
-
-		renderer.setSize(window.innerWidth, window.innerHeight)
+		let dims = getWindowDimensions()
+		renderer.setSize(dims.width, dims.height)
 	}
 	return renderer
 }

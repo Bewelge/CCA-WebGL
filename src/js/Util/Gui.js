@@ -1,4 +1,4 @@
-import { GUI } from "../lib/lil-gui.esm.js"
+import { GUI } from "../../lib/lil-gui.esm.js"
 
 let gui
 export const getGUI = () => {

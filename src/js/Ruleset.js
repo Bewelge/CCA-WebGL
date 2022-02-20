@@ -1,5 +1,5 @@
 import { getRandomStartSettings } from "./StartingPattern.js"
-import { rndFloat, rndInt, peg } from "./Util.js"
+import { rndFloat, rndInt, peg } from "./Util/Util.js"
 
 //Ruleset defining the CCAs' behavior.
 export class Ruleset {
