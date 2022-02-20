@@ -44,6 +44,7 @@ window.onload = () => {
 		automatons.push(renderer)
 	}
 
+	// Used to choose the "best" iteration when multiple are spawned
 	// threeWrap.renderer.domElement.addEventListener("click", ev => {
 	// 	let x = ev.clientX
 	// 	let y = ev.clientY
