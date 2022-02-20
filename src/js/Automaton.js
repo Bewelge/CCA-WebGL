@@ -25,7 +25,6 @@ export class Automaton {
 		//If we pass a ruleset by url, it'll override the passed ruleset
 		if (urlRuleset) {
 			this.ruleset = urlRuleset
-			console.log(this.ruleset)
 		} else {
 			this.ruleset = ruleSet
 		}
@@ -50,7 +49,6 @@ export class Automaton {
 		this.ruleset = ruleset
 
 		this.reinitAutomaton()
-		console.log(123)
 		this.redrawReset()
 	}
 	reinitAutomaton() {
