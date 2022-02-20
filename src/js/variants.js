@@ -749,7 +749,7 @@ export const chipset = {
 	},
 	reach: 1,
 	thresholds: {
-		r: rndFloat(0.5, 0.55),
+		r: rndFloat(0.5, 0.62),
 		g: 0.6624542802106589,
 		b: 0.6799178668530658,
 		a: 0.6336273756343872
