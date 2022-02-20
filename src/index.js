@@ -6,16 +6,21 @@ import { ThreeJsRender } from "./js/ThreeJsRenderer.js"
 import { getGUI } from "./js/Gui.js"
 import { getWindowDimensions } from "./js/Util/RenderDimensions.js"
 
+import {
+	addResizeCallback,
+	getWindowDimensions
+} from "./js/Util/RenderDimensions.js"
+
 let width, height
 var paused = false
-// var stats = Stats()
+var stats = Stats()
 var automatons = []
 var threeWrap
 
 window.onload = () => {
-	let windowDims = getWindowDimensions()
-	width = windowDims.width
-	height = windowDims.height
+	let dims = getWindowDimensions()
+	width = dims.width
+	height = dims.height
 
 	//spawn the three.js wrapper that holds the three.js scene, renderer and camera.
 	threeWrap = new ThreeJsRender(width, height)
@@ -41,6 +46,7 @@ window.onload = () => {
 		automatons.push(renderer)
 	}
 
+	// Used to choose the "best" iteration when multiple are spawned
 	// threeWrap.renderer.domElement.addEventListener("click", ev => {
 	// 	let x = ev.clientX
 	// 	let y = ev.clientY
@@ -50,7 +56,7 @@ window.onload = () => {
 	// 	spawnNewGeneration(automatons[ind].ruleset.copy())
 	// 	automatons[ind].copyUrlOfCurrentRuleset()
 	// })
-	// addVariantsGui()
+	//addVariantsGui()
 	window.addEventListener("keydown", e => {
 		switch (e.code) {
 			case "Space":
@@ -59,8 +65,16 @@ window.onload = () => {
 		}
 	})
 
-	// stats.showPanel(0)
-	// document.body.appendChild(stats.dom)
+	stats.showPanel(0)
+	document.body.appendChild(stats.dom)
+
+	addResizeCallback(() => {
+		dims = getWindowDimensions()
+		threeWrap.setSize(dims.width, dims.height)
+		automatons.forEach(auto => {
+			auto.setSize(dims.width, dims.height)
+		})
+	})
 
 	//Start the render loop!
 	render()
@@ -74,9 +88,14 @@ function spawnNewGeneration(rules) {
 				: auto.setRuleset(rules.copy()) //.mutate(0, rndFloat(0.3, 0.3)))
 	)
 }
-
+var ticker = 0
 function render() {
-	// stats.begin()
+	ticker++
+	if (ticker == 600) {
+		fxpreview()
+	}
+	// console.log(ticker)
+	stats.begin()
 	if (paused) {
 		window.requestAnimationFrame(render)
 		return
@@ -87,14 +106,13 @@ function render() {
 	})
 	//now render the scene with the meshes/automatons in it.
 	threeWrap.render()
-	// stats.end()
+	stats.end()
 
 	//now keep doing it.
 	window.requestAnimationFrame(render)
 }
 
 function addVariantsGui() {
-	let allVariants = variants
 	let gui = getGUI()
 	let folder = gui.addFolder("Variants")
 	for (let key in variants) {
@@ -113,13 +131,16 @@ console.log("")
 console.log("Or check out my GitHub to find more projects of mine.")
 console.log("https://github.com/Bewelge")
 console.log("")
-console.log("Github repo of underlying simulation:")
-console.log("https://github.com/Bewelge/Physarum-WebGL")
+console.log("Github project:")
+console.log("https://github.com/Bewelge/CCA-WebGL")
 
 console.log("")
 console.log("Controls:")
+console.log("Space - Pause/Unpause")
+console.log("F - Fill window")
 console.log("S - Download Image")
 console.log("R - Show raw output")
 console.log("D - Restart automaton")
 console.log("N - Restart with new pattern")
+console.log("Up/Down - Increase/Decrease blending")
 console.log("")
