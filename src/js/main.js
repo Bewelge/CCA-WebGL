@@ -54,7 +54,7 @@ window.onload = () => {
 	// 	spawnNewGeneration(automatons[ind].ruleset.copy())
 	// 	automatons[ind].copyUrlOfCurrentRuleset()
 	// })
-	//addVariantsGui()
+	addVariantsGui()
 	window.addEventListener("keydown", e => {
 		switch (e.code) {
 			case "Space":
@@ -89,7 +89,7 @@ function spawnNewGeneration(rules) {
 var ticker = 0
 function render() {
 	ticker++
-	if (ticker == 600) {
+	if (ticker == 1400) {
 		fxpreview()
 	}
 	// console.log(ticker)
@@ -141,4 +141,3 @@ console.log("R - Show raw output")
 console.log("D - Restart automaton")
 console.log("N - Restart with new pattern")
 console.log("Up/Down - Increase/Decrease blending")
-console.log("")
